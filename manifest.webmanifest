@@ -1,0 +1,17 @@
+{
+  "name": "Cams Chores",
+  "short_name": "Chores",
+  "description": "Tiny wins for Cams. Easiest first, streaks, gentle gamify.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#FFF6EE",
+  "theme_color": "#FF8E72",
+  "orientation": "portrait",
+  "lang": "en",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

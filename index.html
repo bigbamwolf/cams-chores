@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+  <title>Cams Chores</title>
+  <meta name="theme-color" content="#FF8E72" />
+  <meta name="description" content="Tiny wins for Cams." />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="Chores" />
+  <style>
+    :root {
+      --bg-1: #FFF6EE;
+      --bg-2: #FFE9D7;
+      --ink: #3A2A1F;
+      --ink-soft: #6B5648;
+      --accent: #FF8E72;
+      --accent-soft: #FFD8C8;
+      --card: #FFFFFF;
+      --shadow: 0 6px 24px rgba(58, 42, 31, 0.08);
+      --shadow-lg: 0 12px 36px rgba(58, 42, 31, 0.14);
+      --radius: 22px;
+      --radius-sm: 14px;
+    }
+    [data-theme="sky"] {
+      --bg-1: #EEF7FB;
+      --bg-2: #DBEDF6;
+      --ink: #1F3A4A;
+      --ink-soft: #4A6373;
+      --accent: #5BB0CE;
+      --accent-soft: #C8E5F0;
+    }
+    [data-theme="lavender"] {
+      --bg-1: #F6F0FB;
+      --bg-2: #ECE0F4;
+      --ink: #3D2E50;
+      --ink-soft: #6B5680;
+      --accent: #B387D6;
+      --accent-soft: #E0CCF0;
+    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      font-family: 'SF Pro Rounded', 'SF Pro Display', ui-rounded, system-ui, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      background-attachment: fixed;
+      color: var(--ink);
+      min-height: 100vh;
+      padding: env(safe-area-inset-top) 14px calc(env(safe-area-inset-bottom) + 80px);
+      max-width: 480px;
+      margin: 0 auto;
+      font-size: 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 6px 14px;
+    }
+    .greet { font-size: 22px; font-weight: 700; letter-spacing: 0.2px; line-height: 1.1; }
+    .greet small { display: block; font-size: 12px; font-weight: 500; color: var(--ink-soft); margin-top: 4px; }
+    .theme-pick { display: flex; gap: 6px; }
+    .theme-dot {
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+    .theme-dot[data-t="peach"] { background: linear-gradient(135deg, #FFB7A5, #FF8E72); }
+    .theme-dot[data-t="sky"] { background: linear-gradient(135deg, #9CD3E8, #5BB0CE); }
+    .theme-dot[data-t="lavender"] { background: linear-gradient(135deg, #C9A8E8, #B387D6); }
+    .theme-dot.active { transform: scale(1.18); border-color: rgba(255,255,255,0.95); box-shadow: 0 4px 10px rgba(0,0,0,0.18); }
+
+    .stats {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px; margin: 4px 0 18px;
+    }
+    .stat {
+      background: var(--card); border-radius: var(--radius-sm);
+      padding: 12px 8px; text-align: center;
+      box-shadow: var(--shadow);
+    }
+    .stat .big { font-size: 22px; font-weight: 700; line-height: 1; }
+    .stat .label { font-size: 10.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.6px; margin-top: 6px; }
+
+    .add-wrap {
+      background: var(--card); border-radius: var(--radius);
+      padding: 6px 6px 6px 4px; box-shadow: var(--shadow);
+      display: flex; gap: 6px; align-items: center;
+      margin-bottom: 18px;
+    }
+    .add-wrap input {
+      flex: 1; border: none; outline: none; background: transparent;
+      font-size: 16px; padding: 14px 12px;
+      color: var(--ink); font-family: inherit;
+    }
+    .add-wrap input::placeholder { color: var(--ink-soft); opacity: 0.7; }
+    .add-btn {
+      background: var(--accent); color: white; border: none;
+      border-radius: 999px; padding: 12px 18px; font-weight: 700;
+      font-size: 15px; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(255, 142, 114, 0.38);
+      font-family: inherit;
+      transition: transform 0.12s ease;
+    }
+    .add-btn:active { transform: scale(0.95); }
+
+    .section-h {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 4px 4px 10px;
+      gap: 8px;
+    }
+    .section-h h2 { margin: 0; font-size: 18px; font-weight: 700; }
+    .sort-toggle {
+      display: flex; gap: 2px;
+      background: rgba(255,255,255,0.55); border-radius: 999px; padding: 3px;
+      backdrop-filter: blur(6px);
+    }
+    .sort-toggle button {
+      border: none; background: transparent; padding: 6px 11px;
+      font-size: 11.5px; font-weight: 600; border-radius: 999px;
+      color: var(--ink-soft); cursor: pointer; font-family: inherit;
+      letter-spacing: 0.2px;
+    }
+    .sort-toggle button.on { background: var(--card); color: var(--ink); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+
+    .chores { display: flex; flex-direction: column; gap: 10px; }
+    .chore {
+      background: var(--card); border-radius: var(--radius);
+      padding: 14px 14px 14px 16px; box-shadow: var(--shadow);
+      display: grid; grid-template-columns: 1fr auto; gap: 12px;
+      align-items: center;
+      position: relative; overflow: hidden;
+      transition: transform 0.28s ease, opacity 0.28s ease, box-shadow 0.2s ease;
+    }
+    .chore:active { box-shadow: var(--shadow-lg); }
+    .chore.fading { transform: scale(0.85) translateX(20px); opacity: 0; }
+    .chore.pop { animation: pop-in 0.35s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    @keyframes pop-in {
+      0% { transform: scale(0.8); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    .chore-title { font-size: 16px; font-weight: 600; line-height: 1.3; word-break: break-word; }
+    .chore-meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; align-items: center; }
+    .chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 600; padding: 4px 9px;
+      border-radius: 999px; background: var(--accent-soft); color: var(--ink);
+      cursor: pointer; user-select: none;
+      transition: transform 0.1s ease;
+    }
+    .chip:active { transform: scale(0.92); }
+    .chip-home { background: #DDF1D8; color: #2F6B25; }
+    .chip-finances { background: #FBEFC8; color: #7A5E15; }
+    .chip-kids { background: #FFD9E2; color: #8E2A47; }
+    .chip-errands { background: #E2D5F2; color: #4F3A7A; }
+    .chip-personal { background: #FDD6CE; color: #9A3A2C; }
+    .chip-easy { background: #DAEFE0; color: #2F6B45; }
+    .chip-medium { background: #FBE6CB; color: #8A5B1B; }
+    .chip-big { background: #F7CFCC; color: #8E3030; }
+    .chip-due { background: rgba(0,0,0,0.06); color: var(--ink-soft); cursor: pointer; }
+    .chip-due.soon { background: #FBE6CB; color: #8A5B1B; }
+    .done-btn {
+      background: var(--accent); color: white;
+      border: none; border-radius: 999px;
+      width: 54px; height: 54px;
+      font-size: 24px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(255, 142, 114, 0.42);
+      transition: transform 0.12s ease;
+      font-family: inherit;
+    }
+    .done-btn:active { transform: scale(0.85); }
+    .delete-x {
+      position: absolute; top: 6px; right: 10px;
+      width: 22px; height: 22px;
+      border: none; background: transparent;
+      color: var(--ink-soft); cursor: pointer;
+      font-size: 14px;
+      opacity: 0.35;
+      font-family: inherit;
+    }
+    .delete-x:hover { opacity: 1; }
+
+    .show-all {
+      width: 100%; text-align: center; padding: 14px;
+      margin-top: 14px;
+      border: 2px dashed rgba(0,0,0,0.12); border-radius: var(--radius);
+      background: transparent; cursor: pointer;
+      font-size: 13.5px; font-weight: 600; color: var(--ink-soft);
+      font-family: inherit;
+    }
+    .all-chores { margin-top: 14px; display: none; flex-direction: column; gap: 10px; }
+    .all-chores.show { display: flex; }
+
+    .reward-card {
+      background: linear-gradient(135deg, var(--accent-soft) 0%, var(--card) 100%);
+      border-radius: var(--radius);
+      padding: 14px 16px; margin: 22px 0 6px;
+      box-shadow: var(--shadow);
+      display: flex; gap: 12px; align-items: center;
+    }
+    .reward-card .emoji { font-size: 30px; line-height: 1; }
+    .reward-card .label { font-size: 10.5px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.6px; }
+    .reward-card .text { font-weight: 600; font-size: 14px; line-height: 1.3; margin-top: 3px; }
+    .reward-card .edit {
+      margin-left: auto; background: transparent; border: none; cursor: pointer;
+      color: var(--ink-soft); font-family: inherit; font-size: 13px; font-weight: 600;
+      padding: 6px 10px;
+    }
+    .reward-progress {
+      height: 6px; background: rgba(0,0,0,0.05); border-radius: 999px; margin-top: 8px; overflow: hidden;
+    }
+    .reward-progress > div { height: 100%; background: var(--accent); border-radius: 999px; transition: width 0.4s ease; }
+
+    .win-overlay {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.4);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 50; opacity: 0; pointer-events: none;
+      transition: opacity 0.3s ease;
+      padding: 20px;
+    }
+    .win-overlay.show { opacity: 1; pointer-events: all; }
+    .win-card {
+      background: var(--card); border-radius: 28px; padding: 32px 28px;
+      text-align: center; max-width: 320px; transform: scale(0.7);
+      transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .win-overlay.show .win-card { transform: scale(1); }
+    .win-card .emoji { font-size: 54px; line-height: 1; }
+    .win-card h3 { margin: 14px 0 6px; font-size: 22px; }
+    .win-card p { color: var(--ink-soft); margin: 0 0 18px; font-size: 14px; line-height: 1.5; }
+    .win-card button {
+      background: var(--accent); color: white; border: none;
+      padding: 14px 28px; border-radius: 999px; font-weight: 700;
+      font-size: 14px; cursor: pointer; font-family: inherit;
+      box-shadow: 0 6px 16px rgba(255, 142, 114, 0.4);
+    }
+
+    .modal {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.35);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 60; opacity: 0; pointer-events: none;
+      transition: opacity 0.2s ease;
+      padding: 20px;
+    }
+    .modal.show { opacity: 1; pointer-events: all; }
+    .modal-card {
+      background: var(--card); border-radius: 24px; padding: 24px;
+      width: 100%; max-width: 340px;
+    }
+    .modal-card h3 { margin: 0 0 4px; font-size: 18px; }
+    .modal-card .sub { color: var(--ink-soft); font-size: 13px; margin-bottom: 14px; }
+    .modal-card input, .modal-card select {
+      width: 100%; padding: 12px; border-radius: 12px;
+      border: 1px solid rgba(0,0,0,0.1); font-size: 15px;
+      font-family: inherit; outline: none; background: white;
+      color: var(--ink);
+    }
+    .modal-card .row { display: flex; gap: 8px; margin-top: 14px; }
+    .modal-card button {
+      flex: 1; padding: 12px; border-radius: 999px;
+      font-weight: 700; font-size: 14px; cursor: pointer;
+      border: none; font-family: inherit;
+    }
+    .modal-card .save { background: var(--accent); color: white; }
+    .modal-card .cancel { background: rgba(0,0,0,0.06); color: var(--ink); }
+
+    .empty {
+      text-align: center; padding: 36px 22px;
+      color: var(--ink-soft); background: var(--card);
+      border-radius: var(--radius); box-shadow: var(--shadow);
+    }
+    .empty .emoji { font-size: 40px; }
+    .empty p { margin: 12px 0 0; font-size: 14px; line-height: 1.5; }
+
+    .confetti {
+      position: fixed; pointer-events: none; z-index: 100;
+      width: 9px; height: 14px; border-radius: 2px;
+      animation: confetti-fall 1.6s ease-out forwards;
+      will-change: transform, opacity;
+    }
+    @keyframes confetti-fall {
+      0% { transform: translate3d(0,0,0) rotate(0); opacity: 1; }
+      100% { transform: translate3d(var(--cx, 0), 80vh, 0) rotate(720deg); opacity: 0; }
+    }
+
+    .footer {
+      text-align: center; color: var(--ink-soft);
+      font-size: 11px; padding: 28px 0 8px;
+      letter-spacing: 0.5px;
+    }
+    .footer span { opacity: 0.7; }
+
+    @media (max-width: 380px) {
+      .stat { padding: 10px 4px; }
+      .stat .big { font-size: 19px; }
+      .greet { font-size: 20px; }
+      .sort-toggle button { padding: 6px 9px; font-size: 11px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="greet">
+      Hi Cams <span id="emoji-greet">☀️</span>
+      <small id="greet-sub">Let's grab a quick win</small>
+    </div>
+    <div class="theme-pick" aria-label="Themes">
+      <span class="theme-dot active" data-t="peach" title="Peach"></span>
+      <span class="theme-dot" data-t="sky" title="Sky"></span>
+      <span class="theme-dot" data-t="lavender" title="Lavender"></span>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="big"><span id="streak-num">0</span></div><div class="label">🔥 Day Streak</div></div>
+    <div class="stat"><div class="big" id="points-num">0</div><div class="label">⭐ Points</div></div>
+    <div class="stat"><div class="big" id="level-name">Spark</div><div class="label">Level</div></div>
+  </div>
+
+  <div class="add-wrap">
+    <input id="add-input" placeholder="What's a small thing to do?" autocomplete="off" autocapitalize="sentences" />
+    <button class="add-btn" id="add-btn">Add</button>
+  </div>
+
+  <div class="section-h">
+    <h2>Right Now <span aria-hidden="true">✨</span></h2>
+    <div class="sort-toggle" role="tablist">
+      <button data-sort="easiest" class="on">Easiest</button>
+      <button data-sort="category">Category</button>
+      <button data-sort="due">Due</button>
+    </div>
+  </div>
+
+  <div class="chores" id="right-now"></div>
+
+  <button class="show-all" id="show-all-btn">Show all chores</button>
+  <div class="all-chores" id="all-chores"></div>
+
+  <div class="reward-card" id="reward-card">
+    <div class="emoji" id="reward-emoji">🎁</div>
+    <div style="flex:1; min-width:0;">
+      <div class="label">Your reward at 7 day streak</div>
+      <div class="text" id="reward-text">Tap edit, set a treat you'll earn</div>
+      <div class="reward-progress" aria-hidden="true"><div id="reward-bar" style="width:0%"></div></div>
+    </div>
+    <button class="edit" id="reward-edit">Edit</button>
+  </div>
+
+  <div class="footer">
+    <span>made with care, for Cams 💝</span>
+  </div>
+
+  <div class="win-overlay" id="win-overlay" role="dialog" aria-modal="true">
+    <div class="win-card">
+      <div class="emoji" id="win-emoji">🌟</div>
+      <h3 id="win-title">You won the day!</h3>
+      <p id="win-body">Five quick wins, gone. The next five are loaded.</p>
+      <button id="win-continue">Keep the streak</button>
+    </div>
+  </div>
+
+  <div class="modal" id="reward-modal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h3>What's your treat?</h3>
+      <div class="sub">Something to chase at a 7 day streak.</div>
+      <input id="reward-input" placeholder="A coffee date with the girls" autocapitalize="sentences" />
+      <div class="row">
+        <button class="cancel" id="reward-cancel">Cancel</button>
+        <button class="save" id="reward-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="due-modal" role="dialog" aria-modal="true">
+    <div class="modal-card">
+      <h3>When is it due?</h3>
+      <div class="sub">Soft reminder, never a scary deadline.</div>
+      <input id="due-input" type="date" />
+      <div class="row">
+        <button class="cancel" id="due-clear">Clear</button>
+        <button class="save" id="due-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const $ = (s) => document.querySelector(s);
+    const $$ = (s) => Array.from(document.querySelectorAll(s));
+    const localDateStr = (d = new Date()) => {
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, '0');
+      const dd = String(d.getDate()).padStart(2, '0');
+      return `${y}-${m}-${dd}`;
+    };
+    const today = () => localDateStr();
+    const yesterday = () => { const d = new Date(); d.setDate(d.getDate() - 1); return localDateStr(d); };
+    const tomorrow = () => { const d = new Date(); d.setDate(d.getDate() + 1); return localDateStr(d); };
+    function weekKey() {
+      const d = new Date();
+      const onejan = new Date(d.getFullYear(), 0, 1);
+      const week = Math.ceil((((d - onejan) / 86400000) + onejan.getDay() + 1) / 7);
+      return `${d.getFullYear()}-W${week}`;
+    }
+    const uid = () => Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-3);
+
+    const STORAGE_KEY = 'cams-chores-v1';
+    const defaultState = {
+      chores: [],
+      batch: [],
+      points: 0,
+      streak: 0,
+      lastDone: null,
+      freezeUsed: null,
+      reward: '',
+      theme: 'peach',
+      sort: 'easiest',
+      showAll: false,
+      seeded: false,
+    };
+    let state;
+
+    function load() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (!raw) return seed();
+        const parsed = JSON.parse(raw);
+        return { ...defaultState, ...parsed };
+      } catch (e) {
+        return seed();
+      }
+    }
+    function save() {
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) {}
+    }
+
+    function seed() {
+      const starters = [
+        { title: 'Text mom', cat: 'personal' },
+        { title: 'Make the bed', cat: 'home' },
+        { title: 'Water the plants', cat: 'home' },
+        { title: 'Pay the electric bill', cat: 'finances' },
+        { title: 'Tidy the living room', cat: 'home' },
+        { title: 'Book a checkup', cat: 'errands' },
+        { title: 'Check homework folder', cat: 'kids' },
+        { title: 'Drop off the laundry', cat: 'errands' },
+        { title: 'Plan a coffee date', cat: 'personal' },
+        { title: 'Buy school books for the kids', cat: 'kids' },
+        { title: 'Fix finances and sort receipts', cat: 'finances' },
+      ];
+      const chores = starters.map(s => ({
+        id: uid(),
+        title: s.title,
+        cat: s.cat,
+        ease: guessEase(s.title),
+        due: '',
+        created: today(),
+      }));
+      const s = { ...defaultState, chores, seeded: true };
+      return s;
+    }
+
+    const EASY_WORDS = ['pay','text','call','tidy','order','send','reply','check','water','take','throw','make the bed','feed','wipe','sweep','say','remind','grab','book a','tap','answer'];
+    const MED_WORDS = ['organize','plan','sort','prep','schedule','book','arrange','buy','shop','meal','cook','wrap','bake','prepare'];
+    const BIG_WORDS = ['fix','deep clean','taxes','research','paint','declutter','finish','repair','overhaul','reorganize','rebuild','file','renovate','sort out','figure out','redo','clean out','assemble'];
+
+    function guessEase(text) {
+      const t = (text || '').toLowerCase();
+      if (BIG_WORDS.some(w => t.includes(w))) return 'big';
+      if (MED_WORDS.some(w => t.includes(w))) return 'medium';
+      if (EASY_WORDS.some(w => t.includes(w))) return 'easy';
+      if (t.length < 22) return 'easy';
+      if (t.length > 44) return 'big';
+      return 'medium';
+    }
+
+    const CAT_WORDS = {
+      finances: ['bill','pay','rent','mortgage','bank','tax','receipt','invoice','utility','loan','statement','subscription'],
+      kids: ['kid','school','homework','daycare','teacher','pediatric','child','baby','diaper','class','playdate','exam','book for'],
+      errands: ['pick up','drop off','laundry','dry clean','post','mail','pharmacy','checkup','appointment','dentist','clinic','grocer','grocery','market'],
+      personal: ['mom','dad','friend','date','journal','workout','gym','spa','nail','hair','self','call my','message my','read'],
+    };
+    function guessCat(text) {
+      const t = (text || '').toLowerCase();
+      for (const c of Object.keys(CAT_WORDS)) {
+        if (CAT_WORDS[c].some(w => t.includes(w))) return c;
+      }
+      return 'home';
+    }
+
+    const LEVELS = [
+      { min: 0,    name: 'Spark' },
+      { min: 100,  name: 'Star' },
+      { min: 250,  name: 'Superstar' },
+      { min: 500,  name: 'Sunshine' },
+      { min: 1000, name: 'Champion' },
+      { min: 2000, name: 'Legend' },
+    ];
+    function currentLevel() {
+      return LEVELS.slice().reverse().find(l => state.points >= l.min) || LEVELS[0];
+    }
+
+    function tickStreak() {
+      const t = today();
+      if (state.lastDone === t) return;
+      if (state.lastDone === yesterday()) {
+        state.streak += 1;
+      } else if (!state.lastDone) {
+        state.streak = 1;
+      } else {
+        const wk = weekKey();
+        if (state.freezeUsed !== wk) {
+          state.freezeUsed = wk;
+          state.streak += 1;
+        } else {
+          state.streak = 1;
+        }
+      }
+      state.lastDone = t;
+    }
+
+    const EASE_ORDER = { easy: 0, medium: 1, big: 2 };
+    const CAT_ORDER = { home: 0, finances: 1, kids: 2, errands: 3, personal: 4 };
+    function sortChores(arr) {
+      if (state.sort === 'easiest') {
+        arr.sort((a, b) =>
+          EASE_ORDER[a.ease] - EASE_ORDER[b.ease] ||
+          (a.title.length - b.title.length) ||
+          a.title.localeCompare(b.title)
+        );
+      } else if (state.sort === 'category') {
+        arr.sort((a, b) =>
+          CAT_ORDER[a.cat] - CAT_ORDER[b.cat] ||
+          EASE_ORDER[a.ease] - EASE_ORDER[b.ease]
+        );
+      } else if (state.sort === 'due') {
+        arr.sort((a, b) => {
+          const ad = a.due || '9999-12-31';
+          const bd = b.due || '9999-12-31';
+          return ad.localeCompare(bd) || EASE_ORDER[a.ease] - EASE_ORDER[b.ease];
+        });
+      }
+      return arr;
+    }
+    function sortedChores() { return sortChores(state.chores.slice()); }
+
+    function ensureBatch() {
+      if (!Array.isArray(state.batch)) state.batch = [];
+      state.batch = state.batch.filter(id => state.chores.some(c => c.id === id));
+      if (state.batch.length === 0 && state.chores.length > 0) {
+        const sorted = sortedChores();
+        for (const c of sorted) {
+          if (state.batch.length >= 5) break;
+          state.batch.push(c.id);
+        }
+      }
+    }
+    function batchChores() {
+      return state.batch.map(id => state.chores.find(c => c.id === id)).filter(Boolean);
+    }
+    function restChores() {
+      const inBatch = new Set(state.batch);
+      return state.chores.filter(c => !inBatch.has(c.id));
+    }
+
+    const CAT_LABEL = { home: 'Home', finances: 'Bills', kids: 'Kids', errands: 'Errands', personal: 'Personal' };
+    const CAT_EMOJI = { home: '🌿', finances: '💰', kids: '🎒', errands: '🛍️', personal: '💖' };
+    const EASE_LABEL = { easy: 'Easy', medium: 'Medium', big: 'Big' };
+    const EASE_POINTS = { easy: 10, medium: 25, big: 50 };
+
+    function render() {
+      $('#streak-num').textContent = state.streak;
+      $('#points-num').textContent = state.points;
+      $('#level-name').textContent = currentLevel().name;
+      const root = document.documentElement;
+      if (state.theme === 'peach') root.removeAttribute('data-theme');
+      else root.setAttribute('data-theme', state.theme);
+      $$('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.t === state.theme));
+      $$('.sort-toggle button').forEach(b => b.classList.toggle('on', b.dataset.sort === state.sort));
+
+      if (state.reward) {
+        $('#reward-text').textContent = state.reward;
+        $('#reward-emoji').textContent = pickRewardEmoji(state.reward);
+      } else {
+        $('#reward-text').textContent = "Tap edit, set a treat you'll earn";
+        $('#reward-emoji').textContent = '🎁';
+      }
+      const pct = Math.min(100, Math.round((Math.min(state.streak, 7) / 7) * 100));
+      $('#reward-bar').style.width = pct + '%';
+
+      ensureBatch();
+      const rightNow = sortChores(batchChores());
+      const rest = sortChores(restChores());
+
+      const rnEl = $('#right-now');
+      rnEl.innerHTML = '';
+      if (rightNow.length === 0) {
+        rnEl.innerHTML = `<div class="empty"><div class="emoji">🌷</div><p>All clear, Cams. Add one little thing and roll.</p></div>`;
+      } else {
+        rightNow.forEach(c => rnEl.appendChild(renderCard(c)));
+      }
+
+      const allEl = $('#all-chores');
+      allEl.innerHTML = '';
+      const showAllBtn = $('#show-all-btn');
+      if (rest.length === 0) {
+        showAllBtn.style.display = 'none';
+        allEl.classList.remove('show');
+      } else {
+        showAllBtn.style.display = 'block';
+        showAllBtn.textContent = state.showAll ? 'Hide the rest' : `Show all (${rest.length} more)`;
+        if (state.showAll) allEl.classList.add('show'); else allEl.classList.remove('show');
+        rest.forEach(c => allEl.appendChild(renderCard(c)));
+      }
+      save();
+    }
+
+    function pickRewardEmoji(text) {
+      const t = (text || '').toLowerCase();
+      if (t.includes('coffee')) return '☕';
+      if (t.includes('spa')) return '🧖‍♀️';
+      if (t.includes('nail')) return '💅';
+      if (t.includes('shop') || t.includes('buy')) return '🛍️';
+      if (t.includes('movie')) return '🎬';
+      if (t.includes('cake') || t.includes('dessert')) return '🍰';
+      if (t.includes('book')) return '📚';
+      if (t.includes('wine')) return '🍷';
+      if (t.includes('date')) return '💖';
+      if (t.includes('massage')) return '💆‍♀️';
+      return '🎁';
+    }
+
+    function renderCard(c) {
+      const el = document.createElement('div');
+      el.className = 'chore';
+      el.dataset.id = c.id;
+      const dueChip = c.due
+        ? `<span class="chip chip-due ${isDueSoon(c.due) ? 'soon' : ''}" data-action="due">📅 ${formatDue(c.due)}</span>`
+        : `<span class="chip chip-due" data-action="due">+ due</span>`;
+      el.innerHTML = `
+        <div style="min-width:0">
+          <div class="chore-title">${escapeHTML(c.title)}</div>
+          <div class="chore-meta">
+            <span class="chip chip-${c.cat}" data-action="cycle-cat">${CAT_EMOJI[c.cat]} ${CAT_LABEL[c.cat]}</span>
+            <span class="chip chip-${c.ease}" data-action="cycle-ease">${EASE_LABEL[c.ease]}</span>
+            ${dueChip}
+          </div>
+        </div>
+        <button class="done-btn" data-action="done" aria-label="Done">✓</button>
+        <button class="delete-x" data-action="delete" aria-label="Remove">✕</button>
+      `;
+      el.addEventListener('click', (e) => {
+        const target = e.target.closest('[data-action]');
+        if (!target) return;
+        const action = target.dataset.action;
+        if (action === 'done') markDone(c.id, el);
+        else if (action === 'cycle-ease') cycleEase(c.id);
+        else if (action === 'cycle-cat') cycleCat(c.id);
+        else if (action === 'due') openDueModal(c.id);
+        else if (action === 'delete') removeChore(c.id);
+      });
+      return el;
+    }
+
+    function escapeHTML(s) {
+      return String(s).replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+    }
+
+    function isDueSoon(d) {
+      if (!d) return false;
+      return d <= tomorrow();
+    }
+    function formatDue(d) {
+      if (!d) return '';
+      const t = today();
+      if (d === t) return 'today';
+      if (d === tomorrow()) return 'tomorrow';
+      const dt = new Date(d + 'T00:00:00');
+      return dt.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function addChore(title) {
+      const t = (title || '').trim();
+      if (!t) return;
+      const c = {
+        id: uid(),
+        title: t,
+        cat: guessCat(t),
+        ease: guessEase(t),
+        due: '',
+        created: today(),
+      };
+      state.chores.unshift(c);
+      render();
+      const newCard = document.querySelector(`.chore[data-id="${c.id}"]`);
+      if (newCard) newCard.classList.add('pop');
+    }
+
+    function markDone(id, el) {
+      const wasInBatch = state.batch.includes(id);
+      const c = state.chores.find(x => x.id === id);
+      if (!c) return;
+      el.classList.add('fading');
+      confettiBurst(el);
+      softPop();
+      setTimeout(() => {
+        state.points += EASE_POINTS[c.ease];
+        tickStreak();
+        state.chores = state.chores.filter(x => x.id !== id);
+        state.batch = state.batch.filter(bid => bid !== id);
+        const justClearedBatch = wasInBatch && state.batch.length === 0;
+        const justHitStreakReward = state.streak === 7 && state.lastDone === today() && !state._celebratedStreak7;
+        render();
+        if (justHitStreakReward) {
+          state._celebratedStreak7 = true;
+          save();
+          showWin('streak7');
+        } else if (justClearedBatch) {
+          showWin(state.chores.length === 0 ? 'all' : 'batch');
+        }
+      }, 300);
+    }
+
+    function showWin(kind) {
+      const overlay = $('#win-overlay');
+      const title = $('#win-title');
+      const body = $('#win-body');
+      const emoji = $('#win-emoji');
+      const dayWord = state.streak === 1 ? 'day' : 'days';
+      if (kind === 'all') {
+        emoji.textContent = '🎉';
+        title.textContent = "Everything's done!";
+        body.textContent = `Look at you. ${state.streak} ${dayWord} streak. Add a little something when you're ready.`;
+      } else if (kind === 'streak7') {
+        emoji.textContent = '🏆';
+        title.textContent = "7 day streak!";
+        body.textContent = state.reward ? `Your treat: ${state.reward}. You earned it.` : "You earned a treat. Pick something nice.";
+      } else {
+        emoji.textContent = '🌟';
+        title.textContent = "Five down, you won the day!";
+        body.textContent = `${state.streak} ${dayWord} streak. Next batch is loaded when you are.`;
+      }
+      overlay.classList.add('show');
+      bigConfetti();
+    }
+
+    function cycleEase(id) {
+      const c = state.chores.find(x => x.id === id);
+      if (!c) return;
+      const order = ['easy', 'medium', 'big'];
+      c.ease = order[(order.indexOf(c.ease) + 1) % 3];
+      render();
+    }
+    function cycleCat(id) {
+      const c = state.chores.find(x => x.id === id);
+      if (!c) return;
+      const order = ['home', 'finances', 'kids', 'errands', 'personal'];
+      c.cat = order[(order.indexOf(c.cat) + 1) % order.length];
+      render();
+    }
+    function removeChore(id) {
+      state.chores = state.chores.filter(x => x.id !== id);
+      render();
+    }
+
+    let dueEditingId = null;
+    function openDueModal(id) {
+      const c = state.chores.find(x => x.id === id);
+      if (!c) return;
+      dueEditingId = id;
+      $('#due-input').value = c.due || '';
+      $('#due-modal').classList.add('show');
+    }
+    $('#due-save').addEventListener('click', () => {
+      const c = state.chores.find(x => x.id === dueEditingId);
+      if (c) { c.due = $('#due-input').value || ''; }
+      $('#due-modal').classList.remove('show');
+      render();
+    });
+    $('#due-clear').addEventListener('click', () => {
+      const c = state.chores.find(x => x.id === dueEditingId);
+      if (c) c.due = '';
+      $('#due-modal').classList.remove('show');
+      render();
+    });
+    $('#due-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'due-modal') $('#due-modal').classList.remove('show');
+    });
+
+    const CONFETTI_COLORS = ['#FF8E72','#FFD37A','#B8DAB2','#C9B8E8','#F7B8C6','#9CD3E8'];
+    function confettiBurst(originEl) {
+      const r = originEl.getBoundingClientRect();
+      const cx = r.right - 28;
+      const cy = r.top + r.height / 2;
+      for (let i = 0; i < 18; i++) makeConfetti(cx, cy);
+    }
+    function bigConfetti() {
+      const cx = window.innerWidth / 2;
+      const cy = window.innerHeight * 0.28;
+      for (let i = 0; i < 80; i++) makeConfetti(cx + (Math.random() - 0.5) * 220, cy);
+    }
+    function makeConfetti(x, y) {
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.left = x + 'px';
+      el.style.top = y + 'px';
+      el.style.background = CONFETTI_COLORS[Math.floor(Math.random() * CONFETTI_COLORS.length)];
+      el.style.setProperty('--cx', ((Math.random() - 0.5) * 280) + 'px');
+      el.style.animationDuration = (1.1 + Math.random() * 0.9) + 's';
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 2400);
+    }
+
+    let popCtx;
+    function softPop() {
+      try {
+        if (!popCtx) popCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const o = popCtx.createOscillator();
+        const g = popCtx.createGain();
+        o.type = 'sine';
+        o.frequency.setValueAtTime(660, popCtx.currentTime);
+        o.frequency.exponentialRampToValueAtTime(1320, popCtx.currentTime + 0.12);
+        g.gain.setValueAtTime(0.001, popCtx.currentTime);
+        g.gain.exponentialRampToValueAtTime(0.18, popCtx.currentTime + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.001, popCtx.currentTime + 0.18);
+        o.connect(g); g.connect(popCtx.destination);
+        o.start(); o.stop(popCtx.currentTime + 0.2);
+      } catch (e) {}
+    }
+
+    $('#add-btn').addEventListener('click', () => {
+      const v = $('#add-input').value;
+      $('#add-input').value = '';
+      addChore(v);
+    });
+    $('#add-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { addChore(e.target.value); e.target.value = ''; }
+    });
+    $$('.theme-dot').forEach(d => d.addEventListener('click', () => {
+      state.theme = d.dataset.t; render();
+    }));
+    $$('.sort-toggle button').forEach(b => b.addEventListener('click', () => {
+      state.sort = b.dataset.sort; render();
+    }));
+    $('#show-all-btn').addEventListener('click', () => {
+      state.showAll = !state.showAll;
+      render();
+    });
+    $('#win-continue').addEventListener('click', () => $('#win-overlay').classList.remove('show'));
+    $('#win-overlay').addEventListener('click', (e) => {
+      if (e.target.id === 'win-overlay') $('#win-overlay').classList.remove('show');
+    });
+
+    $('#reward-edit').addEventListener('click', () => {
+      $('#reward-input').value = state.reward || '';
+      $('#reward-modal').classList.add('show');
+      setTimeout(() => $('#reward-input').focus(), 80);
+    });
+    $('#reward-cancel').addEventListener('click', () => $('#reward-modal').classList.remove('show'));
+    $('#reward-save').addEventListener('click', () => {
+      state.reward = $('#reward-input').value.trim();
+      $('#reward-modal').classList.remove('show');
+      render();
+    });
+    $('#reward-modal').addEventListener('click', (e) => {
+      if (e.target.id === 'reward-modal') $('#reward-modal').classList.remove('show');
+    });
+    $('#reward-input').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') $('#reward-save').click();
+    });
+
+    function setGreeting() {
+      const h = new Date().getHours();
+      let emoji = '☀️', sub = "Let's grab a quick win";
+      if (h < 6)       { emoji = '🌙'; sub = "A small thing now, then bed"; }
+      else if (h < 11) { emoji = '☀️'; sub = "One easy thing to start the day"; }
+      else if (h < 14) { emoji = '🌞'; sub = "Two minute win, you got this"; }
+      else if (h < 18) { emoji = '🌤️'; sub = "Quick win before the kids land"; }
+      else             { emoji = '🌆'; sub = "Wrap one little thing, call it a day"; }
+      $('#emoji-greet').textContent = emoji;
+      $('#greet-sub').textContent = sub;
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+      });
+    }
+
+    state = load();
+    setGreeting();
+    render();
+  </script>
+</body>
+</html>
