@@ -168,6 +168,22 @@
     .chip-big { background: #F7CFCC; color: #8E3030; }
     .chip-due { background: rgba(0,0,0,0.06); color: var(--ink-soft); cursor: pointer; }
     .chip-due.soon { background: #FBE6CB; color: #8A5B1B; }
+    .chip-remove {
+      background: transparent;
+      border: 1px dashed rgba(0,0,0,0.14);
+      color: var(--ink-soft);
+      opacity: 0.55;
+      font-family: inherit;
+      padding: 3px 9px;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+    }
+    .chip-remove.confirming {
+      background: #F7CFCC;
+      color: #8E3030;
+      opacity: 1;
+      border-color: transparent;
+    }
     .done-btn {
       background: var(--accent); color: white;
       border: none; border-radius: 999px;
@@ -179,16 +195,6 @@
       font-family: inherit;
     }
     .done-btn:active { transform: scale(0.85); }
-    .delete-x {
-      position: absolute; top: 6px; right: 10px;
-      width: 22px; height: 22px;
-      border: none; background: transparent;
-      color: var(--ink-soft); cursor: pointer;
-      font-size: 14px;
-      opacity: 0.35;
-      font-family: inherit;
-    }
-    .delete-x:hover { opacity: 1; }
 
     .show-all {
       width: 100%; text-align: center; padding: 14px;
@@ -653,6 +659,8 @@
       const dueChip = c.due
         ? `<span class="chip chip-due ${isDueSoon(c.due) ? 'soon' : ''}" data-action="due">📅 ${formatDue(c.due)}</span>`
         : `<span class="chip chip-due" data-action="due">+ due</span>`;
+      const confirming = confirmDeleteId === c.id;
+      const removeChip = `<button type="button" class="chip chip-remove ${confirming ? 'confirming' : ''}" data-action="delete" aria-label="Remove">${confirming ? 'tap to remove' : '✕ remove'}</button>`;
       el.innerHTML = `
         <div style="min-width:0">
           <div class="chore-title">${escapeHTML(c.title)}</div>
@@ -660,10 +668,10 @@
             <span class="chip chip-${c.cat}" data-action="cycle-cat">${CAT_EMOJI[c.cat]} ${CAT_LABEL[c.cat]}</span>
             <span class="chip chip-${c.ease}" data-action="cycle-ease">${EASE_LABEL[c.ease]}</span>
             ${dueChip}
+            ${removeChip}
           </div>
         </div>
         <button class="done-btn" data-action="done" aria-label="Done">✓</button>
-        <button class="delete-x" data-action="delete" aria-label="Remove">✕</button>
       `;
       el.addEventListener('click', (e) => {
         const target = e.target.closest('[data-action]');
@@ -673,9 +681,27 @@
         else if (action === 'cycle-ease') cycleEase(c.id);
         else if (action === 'cycle-cat') cycleCat(c.id);
         else if (action === 'due') openDueModal(c.id);
-        else if (action === 'delete') removeChore(c.id);
+        else if (action === 'delete') tryDelete(c.id);
       });
       return el;
+    }
+
+    let confirmDeleteId = null;
+    let confirmDeleteTimer = null;
+    function tryDelete(id) {
+      if (confirmDeleteId === id) {
+        if (confirmDeleteTimer) clearTimeout(confirmDeleteTimer);
+        confirmDeleteId = null;
+        removeChore(id);
+        return;
+      }
+      confirmDeleteId = id;
+      render();
+      if (confirmDeleteTimer) clearTimeout(confirmDeleteTimer);
+      confirmDeleteTimer = setTimeout(() => {
+        confirmDeleteId = null;
+        render();
+      }, 2500);
     }
 
     function escapeHTML(s) {
