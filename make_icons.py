@@ -11,21 +11,23 @@ OUT = os.path.dirname(os.path.abspath(__file__))
 def make_icon(size: int, maskable: bool = False) -> Image.Image:
     img = Image.new("RGBA", (size, size), (0, 0, 0, 0))
 
-    # Peach gradient background (top-left light, bottom-right warm)
-    grad = Image.new("RGB", (size, size), (255, 183, 165))
+    # BTS purple gradient (top soft lilac to bottom deep ARMY purple)
+    grad = Image.new("RGB", (size, size), (201, 168, 240))
     gd = ImageDraw.Draw(grad)
+    top = (201, 168, 240)
+    bot = (107, 63, 160)
     for y in range(size):
         t = y / max(size - 1, 1)
-        r = int(255 - 0 * t)
-        g = int(183 - 41 * t)
-        b = int(165 - 51 * t)
+        r = int(top[0] + (bot[0] - top[0]) * t)
+        g = int(top[1] + (bot[1] - top[1]) * t)
+        b = int(top[2] + (bot[2] - top[2]) * t)
         gd.line([(0, y), (size, y)], fill=(r, g, b))
-    # Diagonal warm overlay
+    # Diagonal magenta overlay for Euphoria sparkle
     overlay = Image.new("RGBA", (size, size), (0, 0, 0, 0))
     od = ImageDraw.Draw(overlay)
     for x in range(size):
         t = x / max(size - 1, 1)
-        od.line([(x, 0), (x, size)], fill=(255, int(120 + 30 * t), int(90 + 20 * t), int(60 * t)))
+        od.line([(x, 0), (x, size)], fill=(208, 77, 160, int(50 * t)))
     bg = Image.alpha_composite(grad.convert("RGBA"), overlay)
 
     if maskable:
@@ -49,9 +51,9 @@ def make_icon(size: int, maskable: bool = False) -> Image.Image:
         fill=(255, 255, 255, 235),
     )
 
-    # Checkmark stroke
+    # Checkmark stroke (ARMY purple)
     stroke_w = max(int(size * 0.06), 6)
-    color = (255, 142, 114, 255)
+    color = (155, 89, 214, 255)
     # Check: from (cx-r*0.55, cy+r*0.05) to (cx-r*0.05, cy+r*0.50) to (cx+r*0.65, cy-r*0.40)
     p1 = (cx - int(inner_r * 0.55), cy + int(inner_r * 0.05))
     p2 = (cx - int(inner_r * 0.05), cy + int(inner_r * 0.45))

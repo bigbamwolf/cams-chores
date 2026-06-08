@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
   <title>Cams Chores</title>
-  <meta name="theme-color" content="#FF8E72" />
+  <meta name="theme-color" content="#9B59D6" />
   <meta name="description" content="Tiny wins for Cams." />
   <link rel="manifest" href="manifest.webmanifest" />
   <link rel="apple-touch-icon" href="icon-192.png" />
@@ -15,33 +15,33 @@
   <meta name="apple-mobile-web-app-title" content="Chores" />
   <style>
     :root {
-      --bg-1: #FFF6EE;
-      --bg-2: #FFE9D7;
-      --ink: #3A2A1F;
-      --ink-soft: #6B5648;
-      --accent: #FF8E72;
-      --accent-soft: #FFD8C8;
+      --bg-1: #F4ECFB;
+      --bg-2: #E5D4F5;
+      --ink: #2D1B4A;
+      --ink-soft: #6D5887;
+      --accent: #9B59D6;
+      --accent-soft: #D9C2F0;
       --card: #FFFFFF;
-      --shadow: 0 6px 24px rgba(58, 42, 31, 0.08);
-      --shadow-lg: 0 12px 36px rgba(58, 42, 31, 0.14);
+      --shadow: 0 6px 24px rgba(45, 27, 74, 0.10);
+      --shadow-lg: 0 12px 36px rgba(45, 27, 74, 0.18);
       --radius: 22px;
       --radius-sm: 14px;
     }
-    [data-theme="sky"] {
-      --bg-1: #EEF7FB;
-      --bg-2: #DBEDF6;
-      --ink: #1F3A4A;
-      --ink-soft: #4A6373;
-      --accent: #5BB0CE;
-      --accent-soft: #C8E5F0;
+    [data-theme="hogwarts"] {
+      --bg-1: #ECE3F5;
+      --bg-2: #D5C3E8;
+      --ink: #1F1A35;
+      --ink-soft: #4F3F73;
+      --accent: #6B3FA0;
+      --accent-soft: #C4A8E0;
     }
-    [data-theme="lavender"] {
-      --bg-1: #F6F0FB;
-      --bg-2: #ECE0F4;
-      --ink: #3D2E50;
-      --ink-soft: #6B5680;
-      --accent: #B387D6;
-      --accent-soft: #E0CCF0;
+    [data-theme="euphoria"] {
+      --bg-1: #FBE9F4;
+      --bg-2: #F1D0E8;
+      --ink: #3A1F45;
+      --ink-soft: #7D5680;
+      --accent: #D04DA0;
+      --accent-soft: #F4C2D9;
     }
     * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     html, body { margin: 0; padding: 0; }
@@ -74,9 +74,9 @@
       cursor: pointer;
       transition: transform 0.15s ease;
     }
-    .theme-dot[data-t="peach"] { background: linear-gradient(135deg, #FFB7A5, #FF8E72); }
-    .theme-dot[data-t="sky"] { background: linear-gradient(135deg, #9CD3E8, #5BB0CE); }
-    .theme-dot[data-t="lavender"] { background: linear-gradient(135deg, #C9A8E8, #B387D6); }
+    .theme-dot[data-t="army"] { background: linear-gradient(135deg, #C9A8F0, #9B59D6); }
+    .theme-dot[data-t="hogwarts"] { background: linear-gradient(135deg, #8B6BC8, #6B3FA0); }
+    .theme-dot[data-t="euphoria"] { background: linear-gradient(135deg, #F4A2D0, #D04DA0); }
     .theme-dot.active { transform: scale(1.18); border-color: rgba(255,255,255,0.95); box-shadow: 0 4px 10px rgba(0,0,0,0.18); }
 
     .stats {
@@ -107,7 +107,7 @@
       background: var(--accent); color: white; border: none;
       border-radius: 999px; padding: 12px 18px; font-weight: 700;
       font-size: 15px; cursor: pointer;
-      box-shadow: 0 4px 14px rgba(255, 142, 114, 0.38);
+      box-shadow: 0 4px 14px rgba(155, 89, 214, 0.42);
       font-family: inherit;
       transition: transform 0.12s ease;
     }
@@ -174,7 +174,7 @@
       width: 54px; height: 54px;
       font-size: 24px; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 4px 14px rgba(255, 142, 114, 0.42);
+      box-shadow: 0 4px 14px rgba(155, 89, 214, 0.45);
       transition: transform 0.12s ease;
       font-family: inherit;
     }
@@ -243,7 +243,7 @@
       background: var(--accent); color: white; border: none;
       padding: 14px 28px; border-radius: 999px; font-weight: 700;
       font-size: 14px; cursor: pointer; font-family: inherit;
-      box-shadow: 0 6px 16px rgba(255, 142, 114, 0.4);
+      box-shadow: 0 6px 16px rgba(155, 89, 214, 0.42);
     }
 
     .modal {
@@ -312,13 +312,13 @@
 <body>
   <div class="topbar">
     <div class="greet">
-      Hi Cams <span id="emoji-greet">☀️</span>
-      <small id="greet-sub">Let's grab a quick win</small>
+      Hi Cams <span id="emoji-greet">💜</span>
+      <small id="greet-sub">Borahae, let's grab a quick win</small>
     </div>
     <div class="theme-pick" aria-label="Themes">
-      <span class="theme-dot active" data-t="peach" title="Peach"></span>
-      <span class="theme-dot" data-t="sky" title="Sky"></span>
-      <span class="theme-dot" data-t="lavender" title="Lavender"></span>
+      <span class="theme-dot active" data-t="army" title="ARMY 💜"></span>
+      <span class="theme-dot" data-t="hogwarts" title="Hogwarts 🪄"></span>
+      <span class="theme-dot" data-t="euphoria" title="Euphoria ✨"></span>
     </div>
   </div>
 
@@ -351,14 +351,14 @@
     <div class="emoji" id="reward-emoji">🎁</div>
     <div style="flex:1; min-width:0;">
       <div class="label">Your reward at 7 day streak</div>
-      <div class="text" id="reward-text">Tap edit, set a treat you'll earn</div>
+      <div class="text" id="reward-text">Concert ticket, butterbeer, glitter, you pick</div>
       <div class="reward-progress" aria-hidden="true"><div id="reward-bar" style="width:0%"></div></div>
     </div>
     <button class="edit" id="reward-edit">Edit</button>
   </div>
 
   <div class="footer">
-    <span>made with care, for Cams 💝</span>
+    <span>made with care, for Cams 💜</span>
   </div>
 
   <div class="win-overlay" id="win-overlay" role="dialog" aria-modal="true">
@@ -372,9 +372,9 @@
 
   <div class="modal" id="reward-modal" role="dialog" aria-modal="true">
     <div class="modal-card">
-      <h3>What's your treat?</h3>
-      <div class="sub">Something to chase at a 7 day streak.</div>
-      <input id="reward-input" placeholder="A coffee date with the girls" autocapitalize="sentences" />
+      <h3>What's your treat? 💜</h3>
+      <div class="sub">Something to chase at a 7 day streak. BTS merch, butterbeer, glitter, anything.</div>
+      <input id="reward-input" placeholder="A BTS concert ticket" autocapitalize="sentences" />
       <div class="row">
         <button class="cancel" id="reward-cancel">Cancel</button>
         <button class="save" id="reward-save">Save</button>
@@ -423,7 +423,7 @@
       lastDone: null,
       freezeUsed: null,
       reward: '',
-      theme: 'peach',
+      theme: 'army',
       sort: 'easiest',
       showAll: false,
       seeded: false,
@@ -499,12 +499,12 @@
     }
 
     const LEVELS = [
-      { min: 0,    name: 'Spark' },
-      { min: 100,  name: 'Star' },
-      { min: 250,  name: 'Superstar' },
-      { min: 500,  name: 'Sunshine' },
-      { min: 1000, name: 'Champion' },
-      { min: 2000, name: 'Legend' },
+      { min: 0,    name: 'Muggle' },
+      { min: 100,  name: 'Lumos' },
+      { min: 250,  name: 'Bias' },
+      { min: 500,  name: 'Glitter' },
+      { min: 1000, name: 'Patronus' },
+      { min: 2000, name: 'Bangtan' },
     ];
     function currentLevel() {
       return LEVELS.slice().reverse().find(l => state.points >= l.min) || LEVELS[0];
@@ -583,7 +583,7 @@
       $('#points-num').textContent = state.points;
       $('#level-name').textContent = currentLevel().name;
       const root = document.documentElement;
-      if (state.theme === 'peach') root.removeAttribute('data-theme');
+      if (state.theme === 'army') root.removeAttribute('data-theme');
       else root.setAttribute('data-theme', state.theme);
       $$('.theme-dot').forEach(d => d.classList.toggle('active', d.dataset.t === state.theme));
       $$('.sort-toggle button').forEach(b => b.classList.toggle('on', b.dataset.sort === state.sort));
@@ -592,8 +592,8 @@
         $('#reward-text').textContent = state.reward;
         $('#reward-emoji').textContent = pickRewardEmoji(state.reward);
       } else {
-        $('#reward-text').textContent = "Tap edit, set a treat you'll earn";
-        $('#reward-emoji').textContent = '🎁';
+        $('#reward-text').textContent = "Concert ticket, butterbeer, glitter, you pick";
+        $('#reward-emoji').textContent = '💜';
       }
       const pct = Math.min(100, Math.round((Math.min(state.streak, 7) / 7) * 100));
       $('#reward-bar').style.width = pct + '%';
@@ -627,6 +627,12 @@
 
     function pickRewardEmoji(text) {
       const t = (text || '').toLowerCase();
+      if (t.includes('concert') || t.includes('bts') || t.includes('bangtan')) return '🎤';
+      if (t.includes('army') || t.includes('borahae') || t.includes('purple')) return '💜';
+      if (t.includes('harry') || t.includes('potter') || t.includes('hogwarts')) return '⚡';
+      if (t.includes('butterbeer') || t.includes('wand')) return '🪄';
+      if (t.includes('euphoria') || t.includes('glitter') || t.includes('sparkle')) return '✨';
+      if (t.includes('ticket')) return '🎟️';
       if (t.includes('coffee')) return '☕';
       if (t.includes('spa')) return '🧖‍♀️';
       if (t.includes('nail')) return '💅';
@@ -737,17 +743,26 @@
       const body = $('#win-body');
       const emoji = $('#win-emoji');
       const dayWord = state.streak === 1 ? 'day' : 'days';
+      const BATCH_TITLES = [
+        "Five down, mic drop 🎤",
+        "Bias level, confirmed 💜",
+        "Wingardium leviosa ✨",
+        "Glitter mode achieved",
+        "Five charms cast 🪄",
+        "Slay, Rue would be proud",
+      ];
+      const idx = Math.floor((state.points / 50) % BATCH_TITLES.length);
       if (kind === 'all') {
         emoji.textContent = '🎉';
-        title.textContent = "Everything's done!";
-        body.textContent = `Look at you. ${state.streak} ${dayWord} streak. Add a little something when you're ready.`;
+        title.textContent = "Everything's done, ARMY!";
+        body.textContent = `Look at you. ${state.streak} ${dayWord} streak. Add a little something when you're ready 💜`;
       } else if (kind === 'streak7') {
         emoji.textContent = '🏆';
-        title.textContent = "7 day streak!";
-        body.textContent = state.reward ? `Your treat: ${state.reward}. You earned it.` : "You earned a treat. Pick something nice.";
+        title.textContent = "7 day streak, Patronus unlocked!";
+        body.textContent = state.reward ? `Your treat: ${state.reward}. You earned it, bias 💜` : "You earned your treat. Pick something nice.";
       } else {
-        emoji.textContent = '🌟';
-        title.textContent = "Five down, you won the day!";
+        emoji.textContent = '💜';
+        title.textContent = BATCH_TITLES[idx];
         body.textContent = `${state.streak} ${dayWord} streak. Next batch is loaded when you are.`;
       }
       overlay.classList.add('show');
@@ -797,7 +812,7 @@
       if (e.target.id === 'due-modal') $('#due-modal').classList.remove('show');
     });
 
-    const CONFETTI_COLORS = ['#FF8E72','#FFD37A','#B8DAB2','#C9B8E8','#F7B8C6','#9CD3E8'];
+    const CONFETTI_COLORS = ['#9B59D6','#D04DA0','#6B3FA0','#F4A2D0','#C9A8F0','#FFD37A','#FFFFFF'];
     function confettiBurst(originEl) {
       const r = originEl.getBoundingClientRect();
       const cx = r.right - 28;
@@ -881,12 +896,12 @@
 
     function setGreeting() {
       const h = new Date().getHours();
-      let emoji = '☀️', sub = "Let's grab a quick win";
-      if (h < 6)       { emoji = '🌙'; sub = "A small thing now, then bed"; }
-      else if (h < 11) { emoji = '☀️'; sub = "One easy thing to start the day"; }
-      else if (h < 14) { emoji = '🌞'; sub = "Two minute win, you got this"; }
-      else if (h < 18) { emoji = '🌤️'; sub = "Quick win before the kids land"; }
-      else             { emoji = '🌆'; sub = "Wrap one little thing, call it a day"; }
+      let emoji = '💜', sub = "Borahae, let's grab a quick win";
+      if (h < 6)       { emoji = '🌙'; sub = "Patronus check, then bed 💜"; }
+      else if (h < 11) { emoji = '🪄'; sub = "Lumos, light up your list"; }
+      else if (h < 14) { emoji = '💜'; sub = "Bias level focus, two minute win"; }
+      else if (h < 18) { emoji = '✨'; sub = "Glitter mode, quick win before the kids"; }
+      else             { emoji = '🌙'; sub = "Mic drop one little thing, call it a day"; }
       $('#emoji-greet').textContent = emoji;
       $('#greet-sub').textContent = sub;
     }
